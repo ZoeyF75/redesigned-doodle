@@ -20,28 +20,11 @@ class deal extends Phaser.Scene {
 
   create ()
   {  
-    this.add.image(configWidth / 2, configHeight / 2, 'bg').setScale(0.4);
-    this.text = this.add.text((config.width / 2) - 50, (config.height / 2) - 50, 'First Deal', { 
-      fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', 
-      fontSize: 24
-    });
-
-    setTimeout(() => {
-      if (this.text) {
-        this.text.destroy();
-        }
-    }, 3000);
+    this.add.image(configWidth / 2, configHeight / 2, 'bg').setScale(0.42);
 
     this.shuffledDeck = createDeck(); //returns array of shuffled deck
     this.mysprite = this.add.sprite(200, 200, 'deck').setScale(0.5);
-
-    this.anims.create( {
-      key: "animation",
-      frames: this.anims.generateFrameNumbers("deck"),
-      frameRate: 5,
-      repeat: -1
-    });
-    // this.mysprite.play("animation");
+    this.add.image(200, 300, 'deck').setScale(0.5).setFrame(this.shuffledDeck[0]);
     this.mysprite.setFrame(this.shuffledDeck[0]);
   }
 

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import intro from './scenes/intro';
+import bet from './scenes/bet';
 import deal from './scenes/deal';
 
 class MyGame extends Phaser.Scene
@@ -8,8 +9,6 @@ class MyGame extends Phaser.Scene
     {
         super();
     } 
-
-
 }
 
 const config = {
@@ -17,7 +16,7 @@ const config = {
     parent: 'phaser-example',
     width: 800,
     height: 600,
-    scene: [intro, deal],
+    scene: [intro, bet, deal],
     autoCenter: true
 };
 
