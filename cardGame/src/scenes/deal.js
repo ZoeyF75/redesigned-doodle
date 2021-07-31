@@ -8,6 +8,11 @@ class deal extends Phaser.Scene {
   constructor(){
 		super({ key: 'deal' })
   }
+
+  init(data) {
+    this.balance = data.balance,
+    this.betAmount = data.betAmount
+  }
   
   preload ()
   {

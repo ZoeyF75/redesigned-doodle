@@ -6,11 +6,11 @@ import bluechip from '../assets/bluechip.png';
 import blackchip from '../assets/blackchip.png';
 import whitechip from '../assets/whitechip.png';
 import fiftycents from '../assets/50cent.png';
+import betButton from '../assets/betButton.png';
+import clearButton from '../assets/button.png';
 import { configWidth, configHeight } from '../assets/helper/gameStateVariables';
 import { calculateBalance } from '../assets/helper/balance';
-let gameState = {
-
-};
+let gameState = { changeScene : false };
 
 class bet extends Phaser.Scene {
   constructor(){
@@ -29,7 +29,8 @@ class bet extends Phaser.Scene {
     this.load.image('greenchip', greenchip);
     this.load.image('blackchip', blackchip);
     this.load.image('fiftycents', fiftycents);
-
+    this.load.image('betButton', betButton);
+    this.load.image('clearButton', clearButton);
   }
 
   create() {
@@ -113,6 +114,7 @@ class bet extends Phaser.Scene {
     blc.alpha = 0.5;
 
     gameState.updateAmount = false;
+    let b = this.balance;
     //white chip
     gameState.betAmount = 15;
     wc.on('pointerover', function (event) {
@@ -122,8 +124,10 @@ class bet extends Phaser.Scene {
       wc.alpha = 0.5;
     });
     wc.on('pointerdown', function (pointer) {
-      gameState.betAmount += 1;
-      gameState.updateAmount = true;
+      if (gameState.betAmount + 1 <= b) {
+        gameState.betAmount += 1;
+        gameState.updateAmount = true;
+      }
     });
 
     //blue chip
@@ -134,7 +138,10 @@ class bet extends Phaser.Scene {
       bc.alpha = 0.5;
     });
     bc.on('pointerdown', function (pointer) {
-      gameState.betAmount += 2;
+      if (gameState.betAmount + 2 <= b) {
+        gameState.betAmount += 2;
+        gameState.updateAmount = true;
+      }
     });
 
     //red chip
@@ -145,7 +152,10 @@ class bet extends Phaser.Scene {
       rc.alpha = 0.5;
     });
     rc.on('pointerdown', function (pointer) {
-      gameState.betAmount += 5;
+      if (gameState.betAmount + 5 <= b) {
+        gameState.betAmount += 5;
+        gameState.updateAmount = true;
+      }
     });
 
     //green chip
@@ -156,7 +166,10 @@ class bet extends Phaser.Scene {
       gc.alpha = 0.5;
     });
     gc.on('pointerdown', function (pointer) {
-      gameState.betAmount += 25;
+      if (gameState.betAmount + 25 <= b) {
+        gameState.betAmount += 25;
+        gameState.updateAmount = true;
+      }
     });
 
     //black chip
@@ -167,10 +180,49 @@ class bet extends Phaser.Scene {
       blc.alpha = 0.5;
     });
     blc.on('pointerdown', function (pointer) {
-      gameState.betAmount += 100;
+      if (gameState.betAmount + 100 <= b) {
+        gameState.betAmount += 100;
+        gameState.updateAmount = true;
+      }
     });
 
-    this.betText = this.add.text((configWidth / 2) - 20, configHeight - 50, `$${gameState.betAmount}`, {
+    this.betText = this.add.text((configWidth / 2) - 20, configHeight - 60, `$${gameState.betAmount}`, {
+      fill: "#ffffff",
+      fontSize: "24px",
+      align: "center",
+    });
+
+    //Bet button effects
+    let betB = this.add.image((configWidth / 2) - 150, configHeight - 50, 'betButton').setScale(0.12).setInteractive();
+    betB.on('pointerover', function (event) {
+      betB.setScale(0.15);
+    });
+    betB.on('pointerout', function (event) {
+      betB.setScale(0.12);
+    });
+    betB.on('pointerdown', function (pointer) {
+      //change scene
+      gameState.changeScene = true;
+    });
+    this.add.text((configWidth / 2) - 170, configHeight - 60, 'Bet', {
+      fill: "#ffffff",
+      fontSize: "24px",
+      align: "center",
+    });
+
+    //Clear button effects
+    let clearB = this.add.image((configWidth / 2) + 150, configHeight - 50, 'clearButton').setScale(0.12).setInteractive();
+    clearB.on('pointerover', function (event) {
+      clearB.setScale(0.15);
+    });
+    clearB.on('pointerout', function (event) {
+      clearB.setScale(0.12);
+    });
+    clearB.on('pointerdown', function (pointer) {
+      gameState.betAmount = 15;
+      gameState.updateAmount = true;
+    });
+    this.add.text((configWidth / 2) + 114, configHeight - 60, 'Clear', {
       fill: "#ffffff",
       fontSize: "24px",
       align: "center",
@@ -181,11 +233,20 @@ class bet extends Phaser.Scene {
   update() {
     if (gameState.updateAmount) {
       this.betText.destroy();
-      this.betText = this.add.text((configWidth / 2) - 20, configHeight - 50, `$${gameState.betAmount}`, {
+      this.betText = this.add.text((configWidth / 2) - 20, configHeight - 60, `$${gameState.betAmount}`, {
         fill: "#ffffff",
         fontSize: "24px",
         align: "center",
       });
+      gameState.updateAmount = false;
+    }
+
+    if (gameState.changeScene) {
+      this.scene.start("deal", {
+        balance : this.balance,
+        betAmount : gameState.betAmount
+      });
+      this.scene.remove("bet");
     }
   }
    
